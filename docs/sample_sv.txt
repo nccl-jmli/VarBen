@@ -7,13 +7,11 @@ chrX    13703890    14134046    inv     0.6
 chrX    19975999    20064786    inv     0.6
 chrX    32391049    32794255    inv     0.6
 chrX    40994338    41012689    inv     0.6
-
 #chrom  start       end         type    AF      dup_num
 chr1    15808448    15814030    dup     0.6     3
 chr1    16076907    16086182    dup     0.6     4
 chr1    23665443    23711586    dup     0.6     3
 chr1    28057278    28081157    dup     0.6     3
-
 #CHR1   CHR1_start  CHR1_end    type            AF      CHR2   CHR2_start   CHR2_end
 chr10	7059511     7059511	    trans_chrom	    0.5	    chr19	17396810	17396810
 chr19	17327977	17327977	trans_chrom     0.5	    chr3	186528041	186528041
