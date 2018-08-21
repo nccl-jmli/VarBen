@@ -1,5 +1,5 @@
-# Author: FangShuangsang
-# Date: 2017/6/4
+# Author: Shuangsang Fang
+# Date: 2018/8/21
 import sys
 from uuid import uuid4
 
@@ -10,19 +10,13 @@ import pysam
 
 
 def count_coverage(bam, chr, start, end):
-    # for read in bam.fetch(chr, start, end)
-    # coverage = bam.count(chr, start, end)
     coverage = 0
     for read in bam.fetch(chr, start, end + 1):
         coverage += 1
-    # if chr not in bam.references:
-    #     return False
-    # coverage = bam.count_coverage(chr, start, end+1)
     return coverage
 
 
 def calPolymorphism(bam, chrom, start, end):
-    print bam, chrom, start, end
     reads = bam.fetch(chrom, start, end + 1)
     numDict = {}
     readsNum = 0
@@ -66,12 +60,7 @@ def getMateKeyName(keyName):
 
 
 def find_mate(read, bam):
-    ''' AlignmentFile.mate() can return a non-primary alignment, so use this function instead '''
-    # if read.is_paired:
-    #     mate_read = bam.mate(read)
-    #     return mate_read
-    # else:
-    #     return None
+    """ AlignmentFile.mate() can return a non-primary alignment, so use this function instead """
     chrom = read.next_reference_name
     for rec in bam.fetch(chrom, read.next_reference_start, read.next_reference_start + 1):
         if rec.query_name == read.query_name and rec.reference_start == read.next_reference_start:
@@ -93,7 +82,6 @@ def check_read(read, is_single):
 
 
 def check_reads_pair(read_left, read_right):
-    # print read_left.query_name, read_right.query_name, read_left.is_reverse, read_right.is_reverse, read_left.is_read1, read_right.is_read1
     if (not read_left.is_reverse and read_right.is_reverse and (
                 (read_left.is_read2 and read_right.is_read1) or (read_left.is_read1 and read_right.is_read2))):
         return True
@@ -106,34 +94,33 @@ def get_new_readname():
     return newId
 
 
-def get_insertSize_range(bam_file, readLength, is_single, debug):
-    if debug:
-        return [100, 1000]
-    if is_single:
-        return []
-    import numpy
-    total_insertSize = []
-    bam = pysam.AlignmentFile(bam_file, 'rb')
-    fout = open("insertSize.txt", 'w')
-    for read in bam.fetch():
-        if read.cigarstring == str(readLength) + "M" and read.flag in [163, 83, 99, 147]:
-            insertSize = abs(read.template_length)
-            total_insertSize.append(insertSize)
-            fout.write(str(insertSize) + "\n")
-    fout.close()
-    total_insertSize.sort()
-    total_len = len(total_insertSize)
-    total_insertSize_narray = numpy.array(total_insertSize)
-    sum1 = total_insertSize_narray.sum()
-    total_insertSize_narray2 = total_insertSize_narray * total_insertSize_narray
-    sum2 = total_insertSize_narray2.sum()
-    mean = sum1 / total_len
-    stdev = math.sqrt(sum2 / total_len - mean ** 2)
-
-    min_insert = mean - stdev * 3 + 100 if mean - stdev * 3 > 0 else 100
-    max_insert = mean + stdev * 3 + 100 if mean - stdev * 3 > 400 else 500
-    # print mean, var
-    return [min_insert, max_insert]
+def get_insertSize_range(bam_file, readLength, is_single):
+    return [100, 1000]
+    # if is_single:
+    #     return []
+    # import numpy
+    # total_insertSize = []
+    # bam = pysam.AlignmentFile(bam_file, 'rb')
+    # fout = open("insertSize.txt", 'w')
+    # for read in bam.fetch():
+    #     if read.cigarstring == str(readLength) + "M" and read.flag in [163, 83, 99, 147]:
+    #         insertSize = abs(read.template_length)
+    #         total_insertSize.append(insertSize)
+    #         fout.write(str(insertSize) + "\n")
+    # fout.close()
+    # total_insertSize.sort()
+    # total_len = len(total_insertSize)
+    # total_insertSize_narray = numpy.array(total_insertSize)
+    # sum1 = total_insertSize_narray.sum()
+    # total_insertSize_narray2 = total_insertSize_narray * total_insertSize_narray
+    # sum2 = total_insertSize_narray2.sum()
+    # mean = sum1 / total_len
+    # stdev = math.sqrt(sum2 / total_len - mean ** 2)
+    #
+    # min_insert = mean - stdev * 3 + 100 if mean - stdev * 3 > 0 else 100
+    # max_insert = mean + stdev * 3 + 100 if mean - stdev * 3 > 400 else 500
+    # # print mean, var
+    # return [min_insert, max_insert]
 
 
 def get_mate(read, bam):

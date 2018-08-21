@@ -58,12 +58,11 @@ def check_mut_info(mutinfo, ref):
 
 def check_polymorphism(bam, ref, mutinfo, maxsnpfrac):
     poly_statistic, reads_num = calPolymorphism(bam, mutinfo[0], mutinfo[1] - 1, mutinfo[2])
-    print poly_statistic, reads_num
+    # print poly_statistic, reads_num
     for pos in range(mutinfo[1] - 1, mutinfo[2]):
-
         ref_nul = ref.fetch(mutinfo[0], pos, pos + 1)
         ref_nul = ref_nul.upper()
-        print pos, ref_nul
+        # print pos, ref_nul
         for nul in 'ATCG':
             if nul == ref_nul:
                 continue

@@ -1,6 +1,9 @@
+# Author: Shuangsang Fang
+# Date: 2018/8/21
 import os
 import argparse
 import sys
+import time
 
 scriptDir = os.path.join(os.path.abspath(os.path.dirname(__file__)), "..")
 sys.path.append(scriptDir)
@@ -14,6 +17,8 @@ from bameditor.common.recordlog import InvalidLog
 
 
 def main(run_args):
+    start_time = time.asctime(time.localtime(time.time()))
+    # print start_time
     temp_out_dir = os.path.join(run_args.outdir, "tempDir")
     os.system("mkdir -p %s" % temp_out_dir)
     invalid_log_file = os.path.join(run_args.outdir, 'invalid_mutation.txt')
@@ -29,12 +34,15 @@ def main(run_args):
     success_list_file = os.path.join(run_args.outdir, 'success_list.txt')
     total_chosen_reads, total_chosen_reads_muts = deal_haplotype_multi(run_args.bamfile, haplotype_list,
                                                                        temp_out_dir, run_args.reffasta,
-                                                                       int(run_args.process), int(run_args.mindepth),
-                                                                       int(run_args.minmutreads), int(run_args.minmapq),
-                                                                       float(run_args.diffcover), run_args.single,
+                                                                       int(run_args.process),
+                                                                       int(run_args.mindepth),
+                                                                       int(run_args.minmutreads),
+                                                                       int(run_args.minmapq),
+                                                                       float(run_args.diffcover),
+                                                                       run_args.single,
                                                                        run_args.multmapfilter, run_args.aligner,
                                                                        run_args.alignerIndex, invalid_log,
-                                                                       success_list_file, run_args.debug)
+                                                                       success_list_file)
     invalid_log.close()
     if len(total_chosen_reads) == 0:
         print "Warning: No reads to deal with of all these sv, checkout your sv file"
@@ -53,12 +61,13 @@ def main(run_args):
 
     # step5: merge remap.edit.bam and exclude exclude.bam and sort
     print "step5: merge remap.edit.bam and exclude exclude.bam and sort"
-    edit_remap_addRG_bam_file = os.path.join(temp_out_dir, "edit.remap.addRG.bam")
-    bamAddRG_picard(edit_remap_bam_file, edit_remap_addRG_bam_file, run_args.picard_path, run_args.seqer)
+    # edit_remap_bam_file, exclude_bam_file = os.path.join(temp_out_dir, "edit.remap.sort.bam"), os.path.join(
+    #     temp_out_dir, "exclude.bam")
     out_bam_file = os.path.join(run_args.outdir, "edit.sorted.bam")
-    bamMerge_picard([edit_remap_addRG_bam_file, exclude_bam_file], out_bam_file, run_args.picard_path)
+    bamMerge([edit_remap_bam_file, exclude_bam_file], out_bam_file)
     bamIndex(out_bam_file)
-
+    end_time = time.asctime(time.localtime(time.time()))
+    # speed_time = end_time - start_time
     print "Edit Bam is completed! Result see %s and valid mutation see %s. Invalid mutation can't be spike in see %s." % (
         out_bam_file, success_list_file, invalid_log_file)
 
@@ -69,8 +78,6 @@ def run():
                         help='Target regions to try and spike in a mutation, format see README.txt')
     parser.add_argument('-b', '--bamfile', dest='bamfile', required=True, help='bam file')
     parser.add_argument('-r', '--reffasta', dest='reffasta', required=True, help='reference fasta file')
-    parser.add_argument('--picard_path', dest='picard_path', required=True,
-                        help='picard path directory')
     parser.add_argument('--seqer', dest='seqer', required=True, help='seqer (illumina, life, BGI)')
     parser.add_argument('--aligner', dest='aligner', required=True, default="bwa", help='choose a aligner(default bwa)')
     parser.add_argument('--alignerIndex', dest='alignerIndex', required=True, help='aligner genome index')
@@ -104,8 +111,7 @@ def run():
     assert os.path.exists(run_args.bamfile), "bamfile is not existed."
     assert os.path.exists(run_args.bamfile + ".bai"), "index of bam file is not existed."
     assert os.path.exists(run_args.reffasta), "reference fasta file is not existed."
-    if run_args.debug:
-        print type(run_args)
+
     main(run_args)
 
 

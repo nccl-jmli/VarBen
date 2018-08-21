@@ -1,7 +1,6 @@
 from subprocess import call
 import pysam
 from bameditor.common.methods import getReadStrand
-# from bameditor.deal_mut.readEditor import modifyRead
 import random
 import os
 
@@ -137,14 +136,9 @@ def remap_2(ref_index, inBamFile, outBamFile, aligner, is_single, threadNum=1):
 
 
 def remap_tmap(ref_index, inBamFile, outBamFile, threadNum=4):
-    # print "remap start ......................................."
     mapping_cmd = "tmap mapall -n %s -f %s -r %s -i bam -s %s -o 2 -v -Y -u --prefix-exclude 5 -o 2 -J 25 --context stage1 map4" % (
         threadNum, ref_index, inBamFile, outBamFile)
-    # mapping_cmd = "tmap mapall -n %s -f %s -r %s -i bam -s %s -o 1 -v -Y -u --prefix-exclude 5 " \
-    #               "-o 2 -J 25 --end -repair 15 --do-repeat-clip --context stage1 map4" % \
-    #               (threadNum, ref_index, inBamFile, outBamFile)
     _call(mapping_cmd)
-    # print "remap end .........................................."
     return outBamFile
 
 
@@ -153,10 +147,11 @@ def bamMerge(bamList, outBamFile):
     _call(cmd)
 
 
-def bamAddRG_picard(inBamFile, outBamFile, picard_path, seqer):
-    cmd = "java -jar %s/AddOrReplaceReadGroups.jar I=%s O=%s RGID=BE RGLB=BE \
-    RGPL=%s RGPU=BE RGSM=BE SO=coordinate TMP_DIR=%s" % (
-        picard_path, inBamFile, outBamFile, seqer, os.path.join(os.path.dirname(outBamFile), 'tmp'))
+def bamAddRG_picard(inBamFile, outBamFile, picard_path, RGID=1, RGLB='BE', RGPL='illumina', RGPU='BE', RGSM='BE'):
+    cmd = "java -jar %s/AddOrReplaceReadGroups.jar I=%s O=%s RGID=%s RGLB=%s \
+    RGPL=%s RGPU=%s RGSM=%s SO=coordinate TMP_DIR=%s" % (
+        picard_path, inBamFile, outBamFile, RGID, RGLB, RGPL, RGPU, RGSM,
+        os.path.join(os.path.dirname(outBamFile), 'tmp'))
     _call(cmd)
 
 

@@ -1,5 +1,5 @@
 from bameditor.common.methods import getReadStrand
-from bameditor.common.bamconvert import remap, bamAddRG
+from bameditor.common.bamconvert import remap, bamSort
 import os
 import pysam
 from bameditor.common.methods import deal_life_reads, add_tag
@@ -46,17 +46,16 @@ def reads_replace(bam_file, total_chosen_reads, seqer, flow_order, lib_key, barc
     exclude_bam.close()
 
     # remap the edited reads
+    header = os.path.join(out_dir, 'bam.header')
+    os.system('samtools view -H %s|grep "^@RG" > %s' % (bam_file, header))
+    head = open(header, 'r').readline().rstrip()
+    if not head:
+        head = None
     edit_remap_bam_file = os.path.join(out_dir, "edit.remap.bam")
-    remap(aligner_index, edit_bam_file, edit_remap_bam_file, aligner, is_single)
-
-    # if not is_single:
-    #     edit_remap = pysam.AlignmentFile(edit_remap_bam_file, 'rb')
-    #     editRemapBam_addRG_File = os.path.join(out_dir, "edit.remap.addRG.bam")
-    #     bamAddRG(edit_remap, edit_bam_reads, bam, editRemapBam_addRG_File)
-    #     edit_remap.close()
-    # else:
-    #     editRemapBam_addRG_File = edit_remap_bam_file
-
-    return edit_remap_bam_file, exclude_bam_file
+    remap(aligner_index, edit_bam_file, edit_remap_bam_file, aligner, is_single, header=head)
+    edit_remap_bam_sorted_prefix = os.path.join(out_dir, "edit.remap.sort")
+    edit_remap_bam_sorted_file = os.path.join(out_dir, "edit.remap.sort.bam")
+    bamSort(edit_remap_bam_file, edit_remap_bam_sorted_prefix)
+    return edit_remap_bam_sorted_file, exclude_bam_file
 
 

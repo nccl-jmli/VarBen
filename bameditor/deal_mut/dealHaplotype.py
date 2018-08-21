@@ -10,7 +10,7 @@ import os
 
 
 def deal_haplotype(bam_file, haplotype, reffasta, haplotype_prefix, mindepth, minmutreads, minmapq, diffcover,
-                   is_single, is_multmapfilter, aligner, aligner_index, header, **kwargs):
+                   is_single, is_multmapfilter, aligner, aligner_index, **kwargs):
     reads_dict = OrderedDict()
     bam = pysam.AlignmentFile(bam_file, 'rb')
     reads = bam.fetch(reference=haplotype.chrom, start=haplotype.start, end=haplotype.end + 1)
@@ -36,7 +36,7 @@ def deal_haplotype(bam_file, haplotype, reffasta, haplotype_prefix, mindepth, mi
                 haplotype.chrom, haplotype.start, haplotype.end, minmutreads)
 
     print "start pick reads"
-    print str(haplotype)
+    # print str(haplotype)
     res = pick_reads(bam, reads_dict, mut_reads_num, is_single, minmapq, is_multmapfilter)
     if res[0] is False:
         return False, "haplotype in position %s:%s-%s: %s" % (haplotype.chrom, haplotype.start, haplotype.end, res[1])
@@ -91,7 +91,7 @@ def deal_haplotype(bam_file, haplotype, reffasta, haplotype_prefix, mindepth, mi
     # alignment and judge coverdiff whether qualified
     chosen_bam_file = haplotype_prefix + ".chosen.remap.bam"
     genome_index = aligner_index
-    remap(genome_index, tmp_bam_file, chosen_bam_file, aligner, header, is_single)
+    remap(genome_index, tmp_bam_file, chosen_bam_file, aligner, is_single)
     chosen_bam = pysam.AlignmentFile(chosen_bam_file)
     if judge_coverdiff(bam, depth, chosen_bam, chosen_reads_num, haplotype, float(diffcover)):
         return my_chosen_reads, my_mate_reads, real_mut_reads_num, depth
@@ -189,26 +189,12 @@ def judge_coverdiff(bam, depth, chosen_bam, chosen_reads_num, haplotype, min_dif
 
 def deal_haplotype_multi(bam_file, haplotype_list, out_dir, reffasta, process, mindepth,
                          minmutreads, minmapq, diffcover, is_single, is_multmapfilter,
-                         aligner, aligner_index, invalid_log, success_list, debug):
+                         aligner, aligner_index, invalid_log, success_list):
     haplotype_pool = Pool(processes=int(process))
     haplotype_res = []
     haplotype_temp_out_dir = os.path.join(out_dir, "haplotype_out")
     if not os.path.exists(haplotype_temp_out_dir):
         os.mkdir(haplotype_temp_out_dir)
-    # if debug:
-    #     for haplotype in haplotype_list:
-    #         haplotype_prefix = os.path.join(haplotype_temp_out_dir,
-    #                                         "%s_%s_%s" % (haplotype.chrom, haplotype.start, haplotype.end))
-    #         res = deal_haplotype(bam_file, haplotype, reffasta, haplotype_prefix, mindepth,
-    #                              minmutreads, minmapq, diffcover, is_single, is_multmapfilter,
-    #                              aligner, aligner_index)
-    #         print type(res)
-    #     exit()
-    header_tmp = os.path.join(haplotype_temp_out_dir, 'header')
-    header = os.system('samtools view -H %s|grep "^@RG" > %s' % (bam_file, header_tmp))
-    head = open(header).readline().rstrip()
-    if not head:
-        head = None
 
     for haplotype in haplotype_list:
         haplotype_prefix = os.path.join(haplotype_temp_out_dir,
@@ -217,7 +203,7 @@ def deal_haplotype_multi(bam_file, haplotype_list, out_dir, reffasta, process, m
             haplotype_pool.apply_async(deal_haplotype,
                                        args=(bam_file, haplotype, reffasta, haplotype_prefix, mindepth,
                                              minmutreads, minmapq, diffcover, is_single, is_multmapfilter,
-                                             aligner, aligner_index, head)))
+                                             aligner, aligner_index)))
     haplotype_pool.close()
     haplotype_pool.join()
 
