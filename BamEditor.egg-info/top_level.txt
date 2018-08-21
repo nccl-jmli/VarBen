@@ -1,0 +1,4 @@
+bameditor
+bin
+src
+tests

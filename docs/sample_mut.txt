@@ -1,0 +1,11 @@
+#chrom  start       end         AF      type    alt
+chr1	899778	    899778	    0.9	    snv	    T
+chr1	1158637	    1158638	    0.9	    ins	    T
+chr1	3397038	    3397039	    0.9	    ins	    T
+chr1	3712508	    3712508	    0.9	    snv	    T
+chr1	5927813	    5927813	    0.9	    snv	    T
+chr1	6219495	    6219495	    0.9	    snv	    T
+chr1	6504642	    6504642	    0.9	    snv	    T
+chr1	6533124	    6533126	    0.9	    del	    .
+chr1	7910956	    7910956	    0.9	    snv	    A
+chr1	8399549	    8399549	    0.9	    snv	    A
