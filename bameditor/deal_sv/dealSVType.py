@@ -7,6 +7,30 @@ import pysam
 import os
 
 
+def record_reads(bam_file, out_dir, label, reads_type1_left, reads_type1_right, reads_type2_left, reads_type2_right,
+                 reads_type3_left, reads_type3_right, reads_type4, reads_type5_left, reads_type5_right):
+    loc = locals()
+    # bam = pysam.AlignmentFile(bam_file, 'rb')
+    print label
+    for key, value in loc.items():
+        if key in ('bam_file', 'label', 'out_dir'):
+            continue
+        reads = value
+        # out_bam_file = os.path.join(out_dir, label + "_" + key + ".bam")
+        # out_bam = pysam.AlignmentFile(out_bam_file, 'wb', template=bam)
+        out_file = os.path.join(out_dir, label + "_" + key + ".txt")
+        out = open(out_file, 'w')
+        # print key
+        for read_pair in reads:
+            # print read_pair
+            read = read_pair[0]
+            read2 = read_pair[1]
+            x = "\t".join([read.reference_name, str(read.reference_start), str(read.reference_end), str(read.is_read1)])
+            y = "\t".join([read2.reference_name, str(read2.reference_start), str(read2.reference_end), str(read2.is_read1)])
+            out.write(x + ";" + y + "\n")
+        out.close()
+
+
 def get_write_reads(total_modify_reads, total_delete_reads, total_add_reads, total_reads_file_dict,
                     total_reads_list_dict):
     for typ, reads_dict in zip(('modify', 'delete', 'add'), (total_modify_reads, total_delete_reads, total_add_reads)):
@@ -44,13 +68,15 @@ def deal_sv(bam_file, ref_file, sv_list, is_single, minmapq, is_multmapfilter, m
         chrom = sv_info.chrom
         start = sv_info.start
         end = sv_info.end
-        mindepth = int(mindepth)
-        minmutreads = int(minmutreads)
+        # mindepth = str(mindepth)
+        # minmutreads = str(minmutreads)
         if not sv_info.sv_type == "cnv":
             start_coverage = count_coverage(bam, chrom, start, start)
             start_coverage_deal = start_coverage * freq
             end_coverage = count_coverage(bam, chrom, end, end)
             end_coverage_deal = end_coverage
+            print start_coverage, end_coverage, mindepth
+            # exit()
             if start_coverage < mindepth or end_coverage < mindepth:
                 invalid_log.info(str(sv_info), "coverage too small")
                 continue
@@ -68,7 +94,7 @@ def deal_sv(bam_file, ref_file, sv_list, is_single, minmapq, is_multmapfilter, m
         if res[0] is False:
             invalid_log.info(str(sv_info), res[1])
             continue
-        fout_success.write(sv_info.svinfo()+"\n")
+        fout_success.write(sv_info.svinfo() + "\n")
         modify_reads, delete_reads, add_reads = res
         # total_modify_reads.extend(modify_reads)
         # total_delete_reads.extend(delete_reads)
@@ -225,10 +251,13 @@ def deal_duplication(bam, ref, svinfo, is_single, readLength, tempDir, insertSiz
 
         reads_type1_left, reads_type1_right, reads_type2_left, reads_type2_right, reads_type3_left, reads_type3_right, reads_type4, reads_type5_left, reads_type5_right, filtered_read_num = pos_type_classify(
             bam, chrom, start, end, is_single, readLength, tempDir, minmapq=minmapq, is_multmapfilter=is_multmapfilter)
-
+        record_reads(bam, tempDir, chrom + "_" + str(start) + "_" + str(end) + "_" + svtype, reads_type1_left, reads_type1_right,
+                     reads_type2_left, reads_type2_right, reads_type3_left, reads_type3_right, reads_type4,
+                     reads_type5_left, reads_type5_right)
         type_reads_num = len(reads_type1_left) + len(reads_type1_right) + len(reads_type2_left) + len(
             reads_type2_right) + len(reads_type3_left) + len(reads_type3_right) + len(reads_type4) + len(
             reads_type5_left) + len(reads_type5_right)
+
         if type_reads_num == 0:
             return False, "All reads is filtered in this scope, total & filtered reads num %s" % filtered_read_num
         freq = freq * (type_reads_num * 2 + filtered_read_num) / (type_reads_num * 2)
@@ -252,7 +281,7 @@ def deal_duplication(bam, ref, svinfo, is_single, readLength, tempDir, insertSiz
         add_reads_type2 = deal_type2(ref, reads_type2_left, reads_type2_right, used_freq, start, end, svtype)
         add_reads.extend(add_reads_type2)
         # modify by fangshs 20180606
-        supple1 = reads_type3_right + reads_type1_right
+        supple1 = reads_type3_right + reads_type2_right  # type2 bug
         supple2 = reads_type3_left + reads_type1_left
         res = deal_type3(reads_type3_left, reads_type3_right,
                          freq_dup, insertSize, start, end, svtype, supple1=supple1, supple2=supple2)
@@ -292,6 +321,9 @@ def deal_deletion(bam, ref, svinfo, is_single, readLength, tempDir, insertSize, 
         type_reads_num = len(reads_type1_left) + len(reads_type1_right) + len(reads_type2_left) + len(
             reads_type2_right) + len(reads_type3_left) + len(reads_type3_right) + len(reads_type4) + len(
             reads_type5_left) + len(reads_type5_right)
+        record_reads(bam, tempDir, chrom + "_" + str(start) + "_" + str(end) + "_" + svtype, reads_type1_left, reads_type1_right,
+                     reads_type2_left, reads_type2_right, reads_type3_left, reads_type3_right, reads_type4,
+                     reads_type5_left, reads_type5_right)
         if type_reads_num == 0:
             return False, "All reads is filtered in this scope, total & filtered reads num %s" % filtered_read_num
         if type_reads_num == 0:
@@ -340,6 +372,9 @@ def deal_inversion(bam, ref, svinfo, is_single, readLength, tempDir, insertSize,
         reads_type1_left, reads_type1_right, reads_type2_left, reads_type2_right, reads_type3_left, reads_type3_right, reads_type4, reads_type5_left, reads_type5_right, filtered_read_num = pos_type_classify(
             bam, chrom, start, end, is_single, readLength, tempDir, center=False, maxsize=insertSize[1],
             minmapq=minmapq, is_multmapfilter=is_multmapfilter)
+        record_reads(bam, tempDir, chrom + "_" + str(start) + "_" + str(end) + "_" + svtype, reads_type1_left, reads_type1_right,
+                     reads_type2_left, reads_type2_right, reads_type3_left, reads_type3_right, reads_type4,
+                     reads_type5_left, reads_type5_right)
         type_reads_num = len(reads_type1_left) + len(reads_type1_right) + len(reads_type2_left) + len(
             reads_type2_right) + len(reads_type3_left) + len(reads_type3_right) + len(reads_type4) + len(
             reads_type5_left) + len(reads_type5_right)
@@ -353,7 +388,7 @@ def deal_inversion(bam, ref, svinfo, is_single, readLength, tempDir, insertSize,
         modified_reads.extend(modify_reads_type1)
         modify_reads_type2 = deal_type2(ref, reads_type2_left, reads_type2_right, freq, start, end, svtype)
         modified_reads.extend(modify_reads_type2)
-        res = deal_type3(reads_type3_left, reads_type3_right, freq, insertSize, start, end, svtype, supple1=reads_type4)
+        res = deal_type3(reads_type3_left, reads_type3_right, freq, insertSize, start, end, svtype)
         if res is False:
             return False, "The reads are not satisfied to modify, see more details in log file."
 
@@ -466,15 +501,19 @@ def deal_translocation_chrom(bam, ref, svinfo, is_single, read_length, tempDir, 
     svtype = "trans_chrom"
     if is_single:
         pass
-
     else:
         reads_type1_left, reads_type1_right, reads_type2_left, reads_type2_right, reads_type3_left, reads_type3_right, reads_type4, reads_type5_left, reads_type5_right, filtered_read_num = pos_type_classify(
             bam, chrom, start, end, is_single, read_length, tempDir + ".info", center=False, maxsize=insertSize[1],
             minmapq=minmapq, is_multmapfilter=is_multmapfilter)
-        # exit()
+        record_reads(bam, tempDir, chrom + "_" + str(start) + "_" + str(end) + "_" + svtype, reads_type1_left, reads_type1_right,
+                     reads_type2_left, reads_type2_right, reads_type3_left, reads_type3_right, reads_type4,
+                     reads_type5_left, reads_type5_right)
         trans_reads_type1_left, trans_reads_type1_right, trans_reads_type2_left, trans_reads_type2_right, trans_reads_type3_left, trans_reads_type3_right, trans_reads_type4, trans_reads_type5_left, trans_reads_type5_right, filtered_read_num = pos_type_classify(
             bam, trans_chr, trans_start, trans_end, is_single, read_length, tempDir + ".trans",
             center=False, maxsize=insertSize[1], minmapq=minmapq, is_multmapfilter=is_multmapfilter)
+        record_reads(bam, tempDir, chrom + "_" + str(start) + "_" + str(end) + "_" + svtype, trans_reads_type1_left,
+                     trans_reads_type1_right, trans_reads_type2_left, trans_reads_type2_right, trans_reads_type3_left,
+                     trans_reads_type3_right, trans_reads_type4, trans_reads_type5_left, trans_reads_type5_right)
         type_reads_num = len(reads_type1_left) + len(reads_type1_right) + len(reads_type2_left) + len(
             reads_type2_right) + len(reads_type3_left) + len(reads_type3_right) + len(reads_type4) + len(
             reads_type5_left) + len(reads_type5_right)

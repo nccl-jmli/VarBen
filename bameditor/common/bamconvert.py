@@ -68,11 +68,12 @@ def samToBam(inSamFile, outBamFile):
     _call(samToBam_cmd)
 
 
+# def bamSort_new(inBamFile, sortedBamFile, sort_key=None):
 def bamSort(inBamFile, sortedBamFile_prefix, sort_key=None):
     if not sort_key:
-        bamSort_cmd = "samtools sort %s %s" % (inBamFile, sortedBamFile_prefix)
+        bamSort_cmd = "samtools sort -o %s %s" % (sortedBamFile_prefix + ".bam", inBamFile)
     elif sort_key == "name":
-        bamSort_cmd = "samtools sort -n %s %s" % (inBamFile, sortedBamFile_prefix)
+        bamSort_cmd = "samtools sort -n -o %s %s" % (sortedBamFile_prefix + ".bam", inBamFile)
     print "samtools sort start................................"
     _call(bamSort_cmd)
     print "samtools sort end.................................."
@@ -93,8 +94,8 @@ def remap(ref_index, inBamFile, outBamFile, aligner, is_single, header=None, sor
         # prefix = outBamFile.rstrip(".bam")
         if sort:
             inPrefix = inBamFile.rstrip(".bam")
-            bamSort(inBamFile, inPrefix + ".sortByName", sort_key="name")
             bam_toConvert = inPrefix + ".sortByName.bam"
+            bamSort(inBamFile, inPrefix + ".sortByName", sort_key="name")
         else:
             bam_toConvert = inBamFile
         fastqPrefix = prefix + ".to"

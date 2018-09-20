@@ -1,8 +1,18 @@
 from bameditor.common.methods import getReadStrand
-from bameditor.common.bamconvert import remap, bamSort
+from bameditor.common.bamconvert import remap, bamSort, bamIndex
 import os
 import pysam
 from bameditor.common.methods import deal_life_reads, add_tag
+
+
+def bam_add_tag(bam_file, out_bam_file):
+    in_bam = pysam.AlignmentFile(bam_file, 'rb')
+    out_bam = pysam.AlignmentFile(out_bam_file, 'wb', template=in_bam)
+    for read in in_bam.fetch():
+        read = add_tag(read)
+        out_bam.write(read)
+    in_bam.close()
+    out_bam.close()
 
 
 def reads_replace(bam_file, total_chosen_reads, seqer, flow_order, lib_key, barcode, tag, out_dir, aligner,
@@ -56,6 +66,13 @@ def reads_replace(bam_file, total_chosen_reads, seqer, flow_order, lib_key, barc
     edit_remap_bam_sorted_prefix = os.path.join(out_dir, "edit.remap.sort")
     edit_remap_bam_sorted_file = os.path.join(out_dir, "edit.remap.sort.bam")
     bamSort(edit_remap_bam_file, edit_remap_bam_sorted_prefix)
-    return edit_remap_bam_sorted_file, exclude_bam_file
+    bamIndex(edit_remap_bam_sorted_file)
+    if tag:
+        edit_remap_addtag_file = os.path.join(out_dir, "edit.remap.sort.bam")
+        bam_add_tag(edit_remap_bam_sorted_file, edit_remap_addtag_file)
+    else:
+        edit_remap_addtag_file = edit_remap_bam_sorted_file
+
+    return edit_remap_addtag_file, exclude_bam_file
 
 

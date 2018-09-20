@@ -355,7 +355,7 @@ def deal_type3(reads_type3_left, reads_type3_right, freq, insertSize, start, end
     print "deal type3 start......"
     reads_left_num = len(reads_type3_left)
     reads_right_num = len(reads_type3_right)
-    # print reads_left_num, reads_right_num
+    print reads_left_num, reads_right_num
     reads_left_mend_id = random_mendIDList(reads_left_num, freq)
     reads_right_mend_id = random_mendIDList(reads_right_num, freq)
     total_del_reads = []
@@ -378,6 +378,11 @@ def deal_type3(reads_type3_left, reads_type3_right, freq, insertSize, start, end
                     new_read = read_right
                     total_modify_reads.append([read, new_read])
                     total_del_reads.append([read_pair_tmp[0], read_pair[1]])
+                    x = "\t".join(
+                        [read.reference_name, str(read.reference_start), str(read.reference_end), str(read.is_read1)])
+                    y = "\t".join([new_read.reference_name, str(new_read.reference_start), str(new_read.reference_end),
+                                   str(new_read.is_read1)])
+                    print(x + "; " + y)
                     break
                 try_time += 1
                 if try_time > try_max_time:
@@ -398,6 +403,11 @@ def deal_type3(reads_type3_left, reads_type3_right, freq, insertSize, start, end
                 if insertSize[0] <= insertSize_tmp <= insertSize[1] and check_reads_pair(read_left, read):
                     new_read = read_left
                     total_add_reads.append([read, new_read])
+                    # x = "\t".join(
+                    #     [read.reference_name, str(read.reference_start), str(read.reference_end), str(read.is_read1)])
+                    # y = "\t".join([new_read.reference_name, str(new_read.reference_start), str(new_read.reference_end),
+                    #                str(new_read.is_read1)])
+                    # print(x + "; " + y)
                     break
                 try_time += 1
                 if try_time > try_max_time:
@@ -405,8 +415,11 @@ def deal_type3(reads_type3_left, reads_type3_right, freq, insertSize, start, end
                     break
 
     elif svtype == "inv":
-        reads_type4 = supple1
-        if len(reads_type4) == 0:
+        #if len(reads_type4) == 0:
+        #    print "Step3: Warning! No corresponding reads to pair"
+        #    return [], [], []
+        # print 'inv', len(reads_left_mend_id)
+        if len(reads_type3_left) == 0 or len(reads_type3_right) == 0:
             print "Step3: Warning! No corresponding reads to pair"
             return [], [], []
         for read_pair_id in reads_left_mend_id:
@@ -414,17 +427,27 @@ def deal_type3(reads_type3_left, reads_type3_right, freq, insertSize, start, end
             read = read_pair[0]
             try_time = 0
             while True:
-                read_pair_tmp = copy.deepcopy(random.sample(reads_type4, 1)[0])
-                read_right = read_pair_tmp[1]
-                insertSize_tmp = start - read.reference_start + end - read_right.reference_start + 1
+                read_pair_tmp = copy.deepcopy(random.sample(reads_type3_right, 1)[0])
+                read_left = read_pair_tmp[0]
+                insertSize_tmp = start - read.reference_start + end - read_left.reference_start + 1
                 if insertSize[0] <= insertSize_tmp <= insertSize[1] and check_reads_pair(read,
-                                                                                         read_right):  ### reverse information?!!!
-                    new_read = read_right
+                                                                                         read_left):  ### reverse information?!!!
+                    new_read = read_left
                     qual = new_read.query_qualities
                     new_read.query_sequence = getComplementarySeq(new_read.query_sequence)[::-1]
                     new_read.query_qualities = qual[::-1]
                     total_modify_reads.append([read, new_read])
-                    total_modify_reads.append([read_pair_tmp[0], read_pair[1]])
+
+                    init_right = read_pair[1]
+                    qual2 = init_right.query_qualities
+                    init_right.query_sequence = getComplementarySeq(init_right.query_sequence)[::-1]
+                    init_right.query_qualities = qual2[::-1]
+                    total_modify_reads.append([init_right, read_pair_tmp[1]])
+                    x = "\t".join(
+                        [read.reference_name, str(read.reference_start), str(read.reference_end), str(read.is_read1)])
+                    y = "\t".join([new_read.reference_name, str(new_read.reference_start), str(new_read.reference_end),
+                                   str(new_read.is_read1)])
+                    print(x + "; " + y)
                     break
                 try_time += 1
                 if try_time > try_max_time:
@@ -436,16 +459,21 @@ def deal_type3(reads_type3_left, reads_type3_right, freq, insertSize, start, end
             read = read_pair[1]
             try_time = 0
             while True:
-                read_pair_tmp = copy.deepcopy(random.sample(reads_type4, 1)[0])
-                read_left = read_pair_tmp[0]
-                insertSize_tmp = read_left.reference_end - start + read.reference_end - end + 1
-                if insertSize[0] <= insertSize_tmp <= insertSize[1] and check_reads_pair(read_left, read):
-                    new_read = read_left
+                read_pair_tmp = copy.deepcopy(random.sample(reads_type3_left, 1)[0])
+                read_right = read_pair_tmp[1]
+                insertSize_tmp = read_right.reference_end - start + read.reference_end - end + 1
+                if insertSize[0] <= insertSize_tmp <= insertSize[1] and check_reads_pair(read_right, read):
+                    new_read = read_right
                     qual = new_read.query_qualities
                     new_read.query_sequence = getComplementarySeq(new_read.query_sequence)[::-1]
                     new_read.query_qualities = qual[::-1]
                     total_modify_reads.append([new_read, read])
-                    total_modify_reads.append([read_pair[0], read_pair_tmp[1]])
+                    
+                    init_left = read_pair[0]
+                    qual2 = init_left.query_qualities
+                    init_left.query_sequence = getComplementarySeq(init_left.query_sequence)[::-1]
+                    init_left.query_qualities = qual2[::-1]
+                    total_modify_reads.append([read_pair_tmp[0], init_left])
                     break
                 try_time += 1
                 if try_time > try_max_time:
@@ -513,6 +541,11 @@ def deal_type3(reads_type3_left, reads_type3_right, freq, insertSize, start, end
                     new_read = read_right
                     total_modify_reads.append([read, new_read])
                     total_modify_reads.append([read_pair_tmp[0], read_pair[1]])
+                    x = "\t".join(
+                        [read.reference_name, str(read.reference_start), str(read.reference_end), str(read.is_read1)])
+                    y = "\t".join([new_read.reference_name, str(new_read.reference_start), str(new_read.reference_end),
+                                   str(new_read.is_read1)])
+                    print(x + "; " + y)
                     break
                 try_time += 1
                 if try_time > try_max_time:

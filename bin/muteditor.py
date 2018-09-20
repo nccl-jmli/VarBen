@@ -75,35 +75,38 @@ def main(run_args):
 def run():
     parser = argparse.ArgumentParser(description='Edit bamfile to spike in SNV, Indel, Complex, Substitution')
     parser.add_argument('-m', '--mutfile', dest='mutfile', required=True,
-                        help='Target regions to try and spike in a mutation, format see README.txt')
-    parser.add_argument('-b', '--bamfile', dest='bamfile', required=True, help='bam file')
-    parser.add_argument('-r', '--reffasta', dest='reffasta', required=True, help='reference fasta file')
-    parser.add_argument('--seqer', dest='seqer', required=True, help='seqer (illumina, life, BGI)')
-    parser.add_argument('--aligner', dest='aligner', required=True, default="bwa", help='choose a aligner(default bwa)')
-    parser.add_argument('--alignerIndex', dest='alignerIndex', required=True, help='aligner genome index')
-    parser.add_argument('-o', '--outdir', dest='outdir', required=True, help='out directory')
+                        help='Target regions to try and spike in a point mutation, format see README.txt')
+    parser.add_argument('-b', '--bamfile', dest='bamfile', required=True,
+                        help='bam file to spike in mutations, with corresponding bam index .bai file')
+    parser.add_argument('-r', '--reffasta', dest='reffasta', required=True, help='genome reference, reference fasta file with corresponding fasta index .fai file')
+    parser.add_argument('-o', '--outdir', dest='outdir', required=True, help='output directory for edited bam file and other information.')
+    parser.add_argument('--alignerIndex', dest='alignerIndex', required=True, help='genome index of aligner, when the default aligner is bwa, bwa index should be provided')
+    parser.add_argument('-p', '--process', dest='process', required=False, default=1,
+                        help='process number(default = 1)')
 
-    parser.add_argument('-p', '--process', dest='process', required=False, default=1, help='process num(default = 1)')
+    parser.add_argument('--seqer', dest='seqer', required=False, default="illumina", help='define the seqer: illumina, life, BGI(default is illumina)')
     parser.add_argument('-g', '--single', action='store_true', default=False,
-                        help="input BAM is single-ended (default is paired-end)")
+                        help="to declare that the input bam is single-ended (default is False)")
+    parser.add_argument('--aligner', dest='aligner', required=False, default="bwa",
+                        help='choose an aligner from bwa and novoalign (default bwa)')
 
     parser.add_argument('--haplosize', dest='haplosize', required=False, default=0,
                         help='haplotype size (default = 0)')
     parser.add_argument('--mindepth', dest='mindepth', required=False, default=30,
-                        help='minimum depth(default = 1000)')
+                        help='minimum depth(default = 30)')
     parser.add_argument('--minmutreads', dest='minmutreads', required=False, default=5,
-                        help='minimum depth(default = 5)')
+                        help='minimum reads to be edited(default = 5)')
     parser.add_argument('--snpfrac', dest='snpfrac', required=False, default=1, help='snp fraction(default = 1)')
     parser.add_argument('--minmapq', dest='minmapq', required=False, default=20,
-                        help='read mapping quality less than minmapq will not be considered to edit')
+                        help='read mapping quality less than minmapq will not be considered to edit(default 20)')
     parser.add_argument('--multmapfilter', action='store_true', default=False,
                         help="multiple mapped reads will not be considered to edit. (default is True)")
-    parser.add_argument('--floworder', dest='floworder', required=False, help='flower order of life sequence')
-    parser.add_argument('--libkey', dest='libkey', required=False, help='libkey of life sequence')
-    parser.add_argument('--barcode', dest='barcode', required=False, help='barcode of life sequence')
     parser.add_argument('--diffcover', dest='diffcover', required=False, default=0.6,
                         help='coverage difference(default 0.9)')
-    parser.add_argument('--tag', action='store_true', default=False, help="tag mutated reads (default False)")
+    parser.add_argument('--floworder', dest='floworder', required=False, help='when the seqer is life, flower order of life sequence should be provided')
+    parser.add_argument('--libkey', dest='libkey', required=False, help='when the seqer is life, libkey of life sequence should be provided')
+    parser.add_argument('--barcode', dest='barcode', required=False, help='when the seqer is life, barcode of life sequence should be provided')
+    parser.add_argument('--tag', action='store_true', default=False, help="tag edited reads (default False)")
     # parser.add_argument('--debug', action='store_true', default=False, help="debug mode(default False)")
 
     run_args = parser.parse_args()
