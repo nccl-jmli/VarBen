@@ -8,12 +8,12 @@ import time
 scriptDir = os.path.join(os.path.abspath(os.path.dirname(__file__)), "..")
 sys.path.append(scriptDir)
 
-from bameditor.deal_mut.checkMutInput import get_haplotypes
-from bameditor.deal_mut.readsReplace import reads_replace
-from bameditor.deal_mut.dealHaplotype import deal_haplotype_multi
-from bameditor.deal_mut.readsModify import reads_modify
-from bameditor.common.bamconvert import bamSort, bamMerge, bamIndex, bamAddRG_picard, bamMerge_picard
-from bameditor.common.recordlog import InvalidLog
+from varben.deal_mut.checkMutInput import get_haplotypes
+from varben.deal_mut.readsReplace import reads_replace
+from varben.deal_mut.dealHaplotype import deal_haplotype_multi
+from varben.deal_mut.readsModify import reads_modify
+from varben.common.bamconvert import bamSort, bamMerge, bamIndex, bamAddRG_picard, bamMerge_picard
+from varben.common.recordlog import InvalidLog
 
 
 def main(run_args):

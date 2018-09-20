@@ -1,4 +1,0 @@
-bameditor
-bin
-src
-tests

@@ -2,9 +2,9 @@ from setuptools import setup, find_packages
 import subprocess
 import sys
 
-PACKAGE_NAME = 'BamEditor'
+PACKAGE_NAME = 'VarBen'
 VERSION = '1.0'
-DESCRIPTION = 'BamEditor package'
+DESCRIPTION = 'VarBen package'
 AUTHOR = 'Fang ShuangSang & Li ZiYang'
 LICENSE = 'Copyright 2018 .'
 

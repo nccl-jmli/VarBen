@@ -7,14 +7,14 @@ import sys
 
 scriptDir = os.path.join(os.path.abspath(os.path.dirname(__file__)), "..")
 sys.path.append(scriptDir)
-from bameditor.common.methods import get_insertSize_range
-from bameditor.deal_sv.dealSVType import deal_sv
-from bameditor.common.bamconvert import bamIndex, bamMerge
-from bameditor.deal_sv.checkSVInput import check_sv_file
-from bameditor.common.recordlog import InvalidLog, RunLog
-from bameditor.deal_sv.getReadsByRegion import get_reads_by_region
-from bameditor.deal_sv.writeBamByChr import write_sub_bam
-from bameditor.deal_sv.mergeEditBam import merge_edit_bam
+from varben.common.methods import get_insertSize_range
+from varben.deal_sv.dealSVType import deal_sv
+from varben.common.bamconvert import bamIndex, bamMerge
+from varben.deal_sv.checkSVInput import check_sv_file
+from varben.common.recordlog import InvalidLog, RunLog
+from varben.deal_sv.getReadsByRegion import get_reads_by_region
+from varben.deal_sv.writeBamByChr import write_sub_bam
+from varben.deal_sv.mergeEditBam import merge_edit_bam
 
 
 def main(run_args):
