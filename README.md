@@ -39,9 +39,9 @@ cp bwa/bwa $HOME/bin
 
 Quick Start
 ---------------------
-+ Spike point mutations (SNV & InDel) into bam file.
++ Spike point mutations (SNV & InDel) into bam file. (Illumina platform)
 
-```
+```bash
 python /opt/VarBen/bin/muteditor.py -m ./mutFile.tsv \
 -b ./Illumina_normal.bam \
 -r ./reference/hg19/ucsc.hg19.fasta \
@@ -57,9 +57,9 @@ python /opt/VarBen/bin/muteditor.py -m ./mutFile.tsv \
 
 ```
     
-+ Spike SVs into bam file.
++ Spike SVs into bam file.  (Illumina platform)
 
-```
+```bash
 python /opt/VarBen/bin/sveditor.py -m ./mutFile.tsv \
 -b ./Illumina_normal.bam \
 -r ./reference/hg19/ucsc.hg19.fasta \
