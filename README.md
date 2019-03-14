@@ -52,11 +52,32 @@ python /opt/VarBen/bin/muteditor.py -m ./mutFile.tsv \
 --haplosize 10 \
 --mindepth 500 \
 --minmutreads 5 \
---snpfrac 0.2 \
--o ./snv_out/
+--snpfrac 0.1 \
+-o ./Illumina_mut_out/
 
 ```
-    
++ Spike point mutations (SNV & InDel) into bam file. (Ion torrent platform)
+
+```bash
+python /opt/VarBen/bin/muteditor.py -m ./mutFile.tsv \
+-b ./IonXpress_001_realigned.bam \
+-r ./referenceLibrary/tmap-f3/hg19/hg19.fasta \
+-p 4 \
+--aligner tmp \
+--alignerIndex ./referenceLibrary/tmap-f3/hg19/hg19.fasta \
+--seqer life \
+--haplosize 10 \
+--mindepth 500 \
+--minmutreads 5 \
+--snpfrac 0.1 \
+--libkey TCAG \
+--barcode CTAAGGTAACGAT \
+--floworder TACGTACGTCTGAGCATCGATCGATGTACAGC \
+-g \
+-o ./Ion_mut_out/
+
+```
+
 + Spike SVs into bam file.  (Illumina platform)
 
 ```bash
