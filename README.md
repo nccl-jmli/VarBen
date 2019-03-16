@@ -114,7 +114,7 @@ chr1	3397038 3397039 0.9 ins AGGTAG
 chr1	6533124 6533126 0.9 del .
 
 chr1	7910946 7910956 0.9 del .
-chr7	55242467 55242481 0.3 Sub TTC	
+chr7	55242467 55242481 0.3 Sub TTC	### Complex indel format: EGFR, c.2237_2251>TTC(p.E746_T751>VP)
 ```
 
 ### svFile format
