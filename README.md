@@ -114,6 +114,7 @@ chr1	3397038 3397039 0.9 ins AGGTAG
 chr1	6533124 6533126 0.9 del .
 
 chr1	7910946 7910956 0.9 del .
+chr7	55242467	55242481	0.3	Sub	TTC	
 ```
 
 ### svFile format
@@ -171,3 +172,15 @@ chr2  29754284  29754947  trans_balance 0.5 chr2  42522695  42523089
 
 chr10 43608984  43609308  trans_unbalance 0.5 chr6  117640981 117640982
 ```
+
+#### CNV format
+
+```
+#chrom  start end type  AF  cnv_type
+
+chrX 66764255 66950650 cnv 2.5 gain 
+
+chr20 52186265 52200826 cnv 2 lose
+
+```
+
