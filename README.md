@@ -81,7 +81,7 @@ python /opt/VarBen/bin/muteditor.py -m ./mutFile.tsv \
 + Spike SVs into bam file.  (Illumina platform)
 
 ```bash
-python /opt/VarBen/bin/sveditor.py -m ./mutFile.tsv \
+python /opt/VarBen/bin/sveditor.py -m ./svFile.tsv \
 -b ./Illumina_normal.bam \
 -r ./reference/hg19/ucsc.hg19.fasta \
 --aligner bwa \
