@@ -63,7 +63,7 @@ python /opt/VarBen/bin/muteditor.py -m ./mutFile.tsv \
 -b ./IonXpress_001_realigned.bam \
 -r ./referenceLibrary/tmap-f3/hg19/hg19.fasta \
 -p 4 \
---aligner tmp \
+--aligner tmap \
 --alignerIndex ./referenceLibrary/tmap-f3/hg19/hg19.fasta \
 --seqer life \
 --haplosize 10 \
