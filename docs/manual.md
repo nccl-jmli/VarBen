@@ -20,7 +20,7 @@ VarBen is under rapid development driven by suggesting and bug reports
 from the mutation calling community.
 
 1.  Currently, we are working on testing a new version of mutation
-    editor for Ion Torrent plantform.
+    editor for Ion Torrent platform.
 
 2.  There is a bug in parallel function, the user cannot stop software
     via ctrl-C during it is running in parallel mode.
