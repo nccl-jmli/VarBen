@@ -99,9 +99,8 @@ format is shown as below.
 Target regions to try and spike in a SV or CNV.
 
 There are six types of SV included in the software: `inv`(inversion),
-`del`(deletion), `dup`(duplication), `trans_chrom` (whole arm
-translocate chromosome), `trans_balance`(balanced translocation
-chromosome), `trans_unbalance` (insertional translocation chromosome).
+`del`(deletion), `dup`(duplication), `trans_chrom` ( Whole-Arm translocation), `trans_balance`(balanced translocation
+), `trans_unbalance` (insertional translocation).
 
 #### del & inv format
 
