@@ -110,7 +110,9 @@ def pick_reads(bam, reads_dict, choose_num, is_single, minmapq, is_multmapfilter
     if is_single:
         num = 0
         chosen_reads_id = []
+        # print "choose_num", choose_num, total_reads_num
         while num < choose_num:
+            # print num
             choose_id = random.randint(0, total_reads_num - 1)
             if choose_id in chosen_reads_id:
                 if len(try_reads_id) == total_reads_num:
@@ -123,7 +125,9 @@ def pick_reads(bam, reads_dict, choose_num, is_single, minmapq, is_multmapfilter
             strand_keys = reads_dict[read_name].keys()
             strand = strand_keys[0]
             read = reads_dict[read_name][strand]
-            if int(read.mapping_quality) < minmapq or len(read.query_sequence) < 250:
+            # print read.mapping_quality, len(read.query_sequence)
+            if int(read.mapping_quality) < minmapq or len(read.query_sequence) > 250:
+                # print "continue"
                 continue
             chosen_reads[read_name] = {}
             chosen_reads[read_name][strand] = read
@@ -190,57 +194,98 @@ def judge_coverdiff(bam, depth, chosen_bam, chosen_reads_num, haplotype, min_dif
 def deal_haplotype_multi(bam_file, haplotype_list, out_dir, reffasta, process, mindepth,
                          minmutreads, minmapq, diffcover, is_single, is_multmapfilter,
                          aligner, aligner_index, invalid_log, success_list):
-    haplotype_pool = Pool(processes=int(process))
-    haplotype_res = []
     haplotype_temp_out_dir = os.path.join(out_dir, "haplotype_out")
     if not os.path.exists(haplotype_temp_out_dir):
         os.mkdir(haplotype_temp_out_dir)
 
-    for haplotype in haplotype_list:
-        haplotype_prefix = os.path.join(haplotype_temp_out_dir,
-                                        "%s_%s_%s" % (haplotype.chrom, haplotype.start, haplotype.end))
-        haplotype_res.append(
-            haplotype_pool.apply_async(deal_haplotype,
-                                       args=(bam_file, haplotype, reffasta, haplotype_prefix, mindepth,
-                                             minmutreads, minmapq, diffcover, is_single, is_multmapfilter,
-                                             aligner, aligner_index)))
-    haplotype_pool.close()
-    haplotype_pool.join()
+    if process != 1:
+        haplotype_pool = Pool(processes=int(process))
+        haplotype_res = []
 
-    # step3: merge mut_list of each read
-    total_chosen_reads = {}
-    total_chosen_reads_muts = {}
-    total_chosen_mate_reads = {}
-    haplotype_out_file = os.path.join(out_dir, "haplotype.txt")
-    hap_out = open(haplotype_out_file, 'w')
+        for haplotype in haplotype_list:
+            haplotype_prefix = os.path.join(haplotype_temp_out_dir,
+                                            "%s_%s_%s" % (haplotype.chrom, haplotype.start, haplotype.end))
+            haplotype_res.append(
+                haplotype_pool.apply_async(deal_haplotype,
+                                           args=(bam_file, haplotype, reffasta, haplotype_prefix, mindepth,
+                                                 minmutreads, minmapq, diffcover, is_single, is_multmapfilter,
+                                                 aligner, aligner_index)))
+        haplotype_pool.close()
+        haplotype_pool.join()
 
-    fout_s = open(success_list, 'w')
-    for each_res, haplotype in zip(haplotype_res, haplotype_list):
-        res = each_res.get()
-        if not res[0]:
-            invalid_log.info(res[1])
-            continue
-        fout_s.write(haplotype.mutinfo() + "\n")
-        chosen_reads, mate_reads, real_mut_reads_num, depth = res
-        hap_out.write(
-            "\t".join(
-                [str(haplotype), str(depth), str(real_mut_reads_num),
-                 str(real_mut_reads_num * 1.0 / depth)]) + "\n")
-        # invalid_log.info(invalid)
-        for read_name in chosen_reads:
-            if read_name not in total_chosen_reads:
-                total_chosen_reads[read_name] = {}
-                total_chosen_reads_muts[read_name] = {}
-            for strand in chosen_reads[read_name]:
-                if strand not in total_chosen_reads[read_name]:
-                    total_chosen_reads[read_name][strand] = chosen_reads[read_name][strand]
-                    total_chosen_reads_muts[read_name][strand] = []
-                total_chosen_reads_muts[read_name][strand].extend(haplotype.mutList)
+        # step3: merge mut_list of each read
+        total_chosen_reads = {}
+        total_chosen_reads_muts = {}
+        total_chosen_mate_reads = {}
+        haplotype_out_file = os.path.join(out_dir, "haplotype.txt")
+        hap_out = open(haplotype_out_file, 'w')
 
-        for read_name in mate_reads:
-            if read_name not in total_chosen_mate_reads:
-                total_chosen_mate_reads[read_name] = mate_reads[read_name]
-    fout_s.close()
-    hap_out.close()
+        fout_s = open(success_list, 'w')
+        for each_res, haplotype in zip(haplotype_res, haplotype_list):
+            res = each_res.get()
+            if not res[0]:
+                invalid_log.info(res[1])
+                continue
+            fout_s.write(haplotype.mutinfo() + "\n")
+            chosen_reads, mate_reads, real_mut_reads_num, depth = res
+            hap_out.write(
+                "\t".join(
+                    [str(haplotype), str(depth), str(real_mut_reads_num),
+                     str(real_mut_reads_num * 1.0 / depth)]) + "\n")
+            # invalid_log.info(invalid)
+            for read_name in chosen_reads:
+                if read_name not in total_chosen_reads:
+                    total_chosen_reads[read_name] = {}
+                    total_chosen_reads_muts[read_name] = {}
+                for strand in chosen_reads[read_name]:
+                    if strand not in total_chosen_reads[read_name]:
+                        total_chosen_reads[read_name][strand] = chosen_reads[read_name][strand]
+                        total_chosen_reads_muts[read_name][strand] = []
+                    total_chosen_reads_muts[read_name][strand].extend(haplotype.mutList)
+
+            for read_name in mate_reads:
+                if read_name not in total_chosen_mate_reads:
+                    total_chosen_mate_reads[read_name] = mate_reads[read_name]
+        fout_s.close()
+        hap_out.close()
+    elif process == 1:
+        total_chosen_reads = {}
+        total_chosen_reads_muts = {}
+        total_chosen_mate_reads = {}
+        haplotype_out_file = os.path.join(out_dir, "haplotype.txt")
+        hap_out = open(haplotype_out_file, 'w')
+        fout_s = open(success_list, 'w')
+        for haplotype in haplotype_list:
+            haplotype_prefix = os.path.join(haplotype_temp_out_dir,
+                                            "%s_%s_%s" % (haplotype.chrom, haplotype.start, haplotype.end))
+            res = deal_haplotype(bam_file, haplotype, reffasta, haplotype_prefix, mindepth,
+                                    minmutreads, minmapq, diffcover, is_single, is_multmapfilter,
+                                    aligner, aligner_index)
+            if res[0]:
+                invalid_log.info(res[1])
+                continue
+            fout_s.write(haplotype.mutinfo() + "\n")
+            chosen_reads, mate_reads, real_mut_reads_num, depth = res
+            hap_out.write(
+                "\t".join(
+                    [str(haplotype), str(depth), str(real_mut_reads_num),
+                     str(real_mut_reads_num * 1.0 / depth)]) + "\n")
+            # invalid_log.info(invalid)
+            for read_name in chosen_reads:
+                if read_name not in total_chosen_reads:
+                    total_chosen_reads[read_name] = {}
+                    total_chosen_reads_muts[read_name] = {}
+                for strand in chosen_reads[read_name]:
+                    if strand not in total_chosen_reads[read_name]:
+                        total_chosen_reads[read_name][strand] = chosen_reads[read_name][strand]
+                        total_chosen_reads_muts[read_name][strand] = []
+                    total_chosen_reads_muts[read_name][strand].extend(haplotype.mutList)
+
+            for read_name in mate_reads:
+                if read_name not in total_chosen_mate_reads:
+                    total_chosen_mate_reads[read_name] = mate_reads[read_name]
+
+        fout_s.close()
+        hap_out.close()
 
     return total_chosen_reads, total_chosen_reads_muts
