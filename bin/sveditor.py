@@ -102,11 +102,11 @@ def run():
     parser.add_argument('--alignerIndex', dest='alignerIndex', required=True, help='genome index of aligner, when the default aligner is bwa, bwa index should be provided')
     parser.add_argument('-p', '--process', dest='process', required=False, default=1,
                         help='process number(default = 1)')
-    parser.add_argument('--seqer', dest='seqer', default='illumina', help='define the seqer: illumina, life, BGI(default is illumina)')
+    parser.add_argument('--seqer', dest='seqer', default='illumina', help='define the seqer: illumina, life, BGI(default is illumina), life is stand for the Ion Torrent platform')
     parser.add_argument('-g', '--single', action='store_true', default=False,
                         help="to declare that the input bam is single-ended (default is False)")
     parser.add_argument('--aligner', dest='aligner', default="bwa",
-                        help='choose an aligner from bwa and novoalign (default bwa)')
+                        help='choose an aligner from bwa, novoalign and tmap (default bwa)')
 
     parser.add_argument('--mindepth', dest='mindepth', required=False, default=30,
                         help='minimum depth(default = 1000)')

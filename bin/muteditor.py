@@ -84,11 +84,11 @@ def run():
     parser.add_argument('-p', '--process', dest='process', required=False, default=1,
                         help='process number(default = 1)')
 
-    parser.add_argument('--seqer', dest='seqer', required=False, default="illumina", help='define the seqer: illumina, life, BGI(default is illumina)')
+    parser.add_argument('--seqer', dest='seqer', required=False, default="illumina", help='define the seqer: illumina, life, BGI(default is illumina), life stand for the Ion Torrent platform')
     parser.add_argument('-g', '--single', action='store_true', default=False,
                         help="to declare that the input bam is single-ended (default is False)")
     parser.add_argument('--aligner', dest='aligner', required=False, default="bwa",
-                        help='choose an aligner from bwa and novoalign (default bwa)')
+                        help='choose an aligner from bwa, novoalign and tmap (default bwa)')
 
     parser.add_argument('--haplosize', dest='haplosize', required=False, default=0,
                         help='haplotype size (default = 0)')

@@ -9,9 +9,11 @@ Installation
 -------------------------
 Dependencies: 
 + pysam (python package >=0.9.4)
++ numpy
 
 ```
-pip install pysam
+python2 -m pip install pysam
+python2 -m pip install numpy
 ```
 
 + samtools (http://samtools.sourceforge.net/)
@@ -42,7 +44,7 @@ Quick Start
 + Spike point mutations (SNV & InDel) into bam file. (Illumina platform)
 
 ```bash
-python /opt/VarBen/bin/muteditor.py -m ./mutFile.tsv \
+python2 /opt/VarBen/bin/muteditor.py -m ./mutFile.tsv \
 -b ./Illumina_normal.bam \
 -r ./reference/hg19/ucsc.hg19.fasta \
 -p 4 \
@@ -59,7 +61,7 @@ python /opt/VarBen/bin/muteditor.py -m ./mutFile.tsv \
 + Spike point mutations (SNV & InDel) into bam file. (Ion torrent platform)
 
 ```bash
-python /opt/VarBen/bin/muteditor.py -m ./mutFile.tsv \
+python2 /opt/VarBen/bin/muteditor.py -m ./mutFile.tsv \
 -b ./IonXpress_001_realigned.bam \
 -r ./referenceLibrary/tmap-f3/hg19/hg19.fasta \
 -p 4 \
@@ -81,7 +83,7 @@ python /opt/VarBen/bin/muteditor.py -m ./mutFile.tsv \
 + Spike SVs into bam file.  (Illumina platform)
 
 ```bash
-python /opt/VarBen/bin/sveditor.py -m ./svFile.tsv \
+python2 /opt/VarBen/bin/sveditor.py -m ./svFile.tsv \
 -b ./Illumina_normal.bam \
 -r ./reference/hg19/ucsc.hg19.fasta \
 --aligner bwa \
@@ -180,7 +182,7 @@ chr10 43608984  43609308  trans_unbalance 0.5 chr6  117640981 117640982
 
 chrX 66764255 66950650 cnv 2.5 gain 
 
-chr20 52186265 52200826 cnv 2 loss
+chr20 52186265 52200826 cnv 1 loss
 
 ```
 
