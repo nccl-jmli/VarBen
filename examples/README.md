@@ -14,7 +14,7 @@ cd ./src
 bash 01-spikein_snv_and_indel_IonTorrent.sh
 ```
 
-Then go to ./output/ion folder to check the results.
+Then go to `./output/ion` folder to check the results.
 
-You will get three mutations in `edit.sorted.bam` file, one mutation is failed to spike in (due to the panel didn't cover this region) 
+You will get three mutations in `edit.sorted.bam` file, one mutation is failed to spike in.
 
