@@ -18,3 +18,10 @@ Then go to `./output/ion` folder to check the results.
 
 You will get three mutations in `edit.sorted.bam` file, one mutation is failed to spike in.
 
+3. Spike SNV and Indel in Illumina BAM file
+
+```
+cd ./src
+bash 03-spikein_snv_and_indel_Illumina.sh
+```
+
