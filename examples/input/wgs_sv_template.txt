@@ -1,0 +1,9 @@
+#chrom start end type AF (deletion and inversion)
+chrX 19975999 20064786 inv 0.6
+chrX 108614726 108616334 del 0.6
+#chrom start end type AF dup_num (duplication)
+chr1 15808448 15814030 dup 0.6 3
+#CHR1 CHR1_start CHR1_end type AF CHR2 CHR2_start CHR2_end
+chr2 29754284 29754947 trans_balance 0.5 chr2 42522695 42523089
+chr10 43608984 43609308 trans_unbalance 0.5 chr6 117640981 117640982
+chr19 17327977 17327977 trans_chrom 0.5 chr3 186528041 186528041
