@@ -261,7 +261,7 @@ def deal_haplotype_multi(bam_file, haplotype_list, out_dir, reffasta, process, m
             res = deal_haplotype(bam_file, haplotype, reffasta, haplotype_prefix, mindepth,
                                     minmutreads, minmapq, diffcover, is_single, is_multmapfilter,
                                     aligner, aligner_index)
-            if res[0]:
+            if not res[0]:
                 invalid_log.info(res[1])
                 continue
             fout_s.write(haplotype.mutinfo() + "\n")
