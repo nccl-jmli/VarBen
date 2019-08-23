@@ -2,7 +2,7 @@
 
 
 VARBEN_MUTEDITOR=../../bin/sveditor.py
-SNV_INDEL_TEMPLATE=../input/wgs_sv_template.tsv
+SNV_INDEL_TEMPLATE=../input/wgs_sv_template.txt
 
 
 

@@ -25,3 +25,11 @@ cd ./src
 bash 03-spikein_snv_and_indel_Illumina.sh
 ```
 
+4. Spike SV in WGS data
+
+If you don't have any sample, please download NA12878 Low coverage WGS from [The International Genome Sample Resource](https://www.internationalgenome.org/data-portal/sample/NA12878). Then you should mapping the data to reference and create a index file for the BAM. After that, you could try to run the command below to edit SV in the BAM file.
+
+```
+cd ./src
+bash 02-spikein_sv_Illumina_WGS.sh
+```
