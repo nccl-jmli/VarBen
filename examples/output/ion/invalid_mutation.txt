@@ -1,0 +1,1 @@
+haplotype in position chr21:44513299-44513301: depth less than min depth(500)

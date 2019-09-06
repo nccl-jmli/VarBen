@@ -1,0 +1,2 @@
+chrom: chr10, start: 43608983, end: 43609307, sv_type: trans_unbalance, freq: 0.5, trans_chrom: chr6, trans_start: 117640980, trans_end: 117640981, coverage too small
+chrom: chr19, start: 17327976, end: 17327976, sv_type: trans_chrom, freq: 0.5, trans_chrom: chr3, trans_start: 186528040, trans_end: 186528040, coverage deal too small
