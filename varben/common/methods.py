@@ -29,8 +29,8 @@ def calPolymorphism(bam, chrom, start, end):
                 pos = pair[0]
                 if pos is None:
                     continue
-                if pos < len(read.query_alignment_sequence):
-                    nul = read.query_alignment_sequence[pos]
+                if pos < read.query_length:
+                    nul = read.query_sequence[pos]
                     if nul in 'ATCG':
                         numDict[pair[1]][nul] += 1
     return numDict, readsNum
