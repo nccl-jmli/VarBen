@@ -6,7 +6,9 @@ from re import sub
 from random import random
 from uuid import uuid4
 
+
 if len(sys.argv) == 4:
+    print(len(sys.argv))
     assert sys.argv[1].endswith('.bam')
     inbamfn = sys.argv[1]
     outbamfn = sub('.bam$', '.renamereads.bam', inbamfn)
@@ -53,4 +55,4 @@ if len(sys.argv) == 4:
     outbam.close()
     inbam.close()
 else:
-    print "usage:",sys.argv[0],"<bam (uses less memory if sorted by readname)>"
+    sys.exit("usage: %s <bam (uses less memory if sorted by readname)>" % sys.argv[0])
