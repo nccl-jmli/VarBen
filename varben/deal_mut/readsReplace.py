@@ -58,7 +58,7 @@ def reads_replace(bam_file, total_chosen_reads, seqer, flow_order, lib_key, barc
     # remap the edited reads
     header = os.path.join(out_dir, 'bam.header')
     os.system('samtools view -H %s|grep "^@RG" > %s' % (bam_file, header))
-    head = open(header, 'r').readline().rstrip()
+    head = open(header, 'r').readline().rstrip().replace('\t','\\t')
     if not head:
         head = None
     edit_remap_bam_file = os.path.join(out_dir, "edit.remap.bam")
