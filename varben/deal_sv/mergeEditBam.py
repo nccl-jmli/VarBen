@@ -162,7 +162,7 @@ def merge_edit_bam(bam_file, out_dir, is_single, total_modify_reads_file, total_
 
     header = os.path.join(out_dir, 'bam.header')
     os.system('samtools view -H %s|grep "^@RG" > %s' % (bam_file, header))
-    head = open(header, 'r').readline().rstrip()
+    head = open(header, 'r').readline().rstrip().replace('\t','\\t')
     if not head:
         head = None
     edit_remap_bam_file = os.path.join(out_dir, "edit.remap.bam")
