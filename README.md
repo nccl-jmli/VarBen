@@ -186,3 +186,8 @@ chr20 52186265 52200826 cnv 1 loss
 
 ```
 
+
+
+#### If you find this tool useful in your research, please consider citing:
+
+> Li, Z., Fang, S., Zhang, R., Yu, L., Zhang, J., Bu, D., Sun, L., Zhao, Y., & Li, J. (2020). Variant Benchmark Tool: Generating in Silico Reference Data Sets for Clinical Next-Generation Sequencing Bioinformatics Pipeline Evaluation. The Journal of molecular diagnostics : JMD, S1525-1578(20)30585-7. Advance online publication. https://doi.org/10.1016/j.jmoldx.2020.11.010
