@@ -47,6 +47,7 @@ def map_bwa(ref_index, outSamFile, fq1, fq2=None, header=None, threadNum=1):
     else:
         mapping_cmd = "bwa mem %s -t %s %s %s %s >%s" % (RG_head, threadNum, ref_index, fq1, fq2, outSamFile)
     print "mapping by bwa start ...................................."
+    print mapping_cmd
     _call(mapping_cmd)
     print "mapping by bwa end ......................................"
 
@@ -86,7 +87,7 @@ def bamIndex(inBamFile):
     print "samtools index end ................................"
 
 
-def remap(ref_index, inBamFile, outBamFile, aligner, is_single, header=None, sort=True, threadNum=4):
+def remap(ref_index, inBamFile, outBamFile, aligner, is_single, header=None, sort=True, threadNum=1):
     print "remap start ......................................."
     aligner = aligner.lower()
     prefix = outBamFile.rstrip(".bam")
@@ -136,7 +137,7 @@ def remap_2(ref_index, inBamFile, outBamFile, aligner, is_single, threadNum=1):
     return outBamFile
 
 
-def remap_tmap(ref_index, inBamFile, outBamFile, threadNum=4):
+def remap_tmap(ref_index, inBamFile, outBamFile, threadNum=1):
     mapping_cmd = "tmap mapall -n %s -f %s -r %s -i bam -s %s -o 2 -v -Y -u --prefix-exclude 5 -o 2 -J 25 --context stage1 map4" % (
         threadNum, ref_index, inBamFile, outBamFile)
     _call(mapping_cmd)
