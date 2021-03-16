@@ -86,7 +86,7 @@ def bamIndex(inBamFile):
     print "samtools index end ................................"
 
 
-def remap(ref_index, inBamFile, outBamFile, aligner, is_single, header=None, sort=True, threadNum=4):
+def remap(ref_index, inBamFile, outBamFile, aligner, is_single, header=None, sort=True, threadNum=1):
     print "remap start ......................................."
     aligner = aligner.lower()
     prefix = outBamFile.rstrip(".bam")
@@ -136,7 +136,7 @@ def remap_2(ref_index, inBamFile, outBamFile, aligner, is_single, threadNum=1):
     return outBamFile
 
 
-def remap_tmap(ref_index, inBamFile, outBamFile, threadNum=4):
+def remap_tmap(ref_index, inBamFile, outBamFile, threadNum=1):
     mapping_cmd = "tmap mapall -n %s -f %s -r %s -i bam -s %s -o 2 -v -Y -u --prefix-exclude 5 -o 2 -J 25 --context stage1 map4" % (
         threadNum, ref_index, inBamFile, outBamFile)
     _call(mapping_cmd)
