@@ -47,7 +47,6 @@ def map_bwa(ref_index, outSamFile, fq1, fq2=None, header=None, threadNum=1):
     else:
         mapping_cmd = "bwa mem %s -t %s %s %s %s >%s" % (RG_head, threadNum, ref_index, fq1, fq2, outSamFile)
     print "mapping by bwa start ...................................."
-    print mapping_cmd
     _call(mapping_cmd)
     print "mapping by bwa end ......................................"
 
